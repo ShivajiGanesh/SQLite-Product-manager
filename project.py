@@ -1,34 +1,42 @@
 import sqlite3
 
-def create_database():
+# Create or connect to a database #
+conn = sqlite3.connect("products.db")
+cursor = conn.cursor()
+
+# Create a table #9
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS products (
+        id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        quantity INTEGER NOT NULL,
+        price REAL NOT NULL
+    )
+''')
+conn.commit()
+
+import sqlite3
+
+# Function to add a product #
+def add_product(product_id, name, quantity, price):
     conn = sqlite3.connect("products.db")
     cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS products (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            quantity INTEGER NOT NULL,
-            price REAL NOT NULL
-        )
-    """)
+    cursor.execute("INSERT INTO products (id, name, quantity, price) VALUES (?, ?, ?, ?)", 
+                   (product_id, name, quantity, price))
     conn.commit()
     conn.close()
 
-def add_product(name, quantity, price):
-    conn = sqlite3.connect("products.db")
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO products (name, quantity, price) VALUES (?, ?, ?)", (name, quantity, price))
-    conn.commit()
-    conn.close()
-
+# Function to update product quantity #
 def update_quantity(product_id, new_quantity):
     conn = sqlite3.connect("products.db")
     cursor = conn.cursor()
-    cursor.execute("UPDATE products SET quantity = ? WHERE id = ?", (new_quantity, product_id))
+    cursor.execute("UPDATE products SET quantity = ? WHERE id = ?", 
+                   (new_quantity, product_id))
     conn.commit()
     conn.close()
 
-def fetch_all_products():
+# Function to fetch all products #
+def fetch_products():
     conn = sqlite3.connect("products.db")
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM products")
@@ -36,7 +44,8 @@ def fetch_all_products():
     conn.close()
     return products
 
-def find_most_expensive_product():
+# Function to find the most expensive product #
+def most_expensive_product():
     conn = sqlite3.connect("products.db")
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM products ORDER BY price DESC LIMIT 1")
@@ -44,15 +53,15 @@ def find_most_expensive_product():
     conn.close()
     return product
 
-# Example usage
-if __name__ == "__main__":
-    create_database()
-    add_product("Laptop", 10, 75000)
-    add_product("Smartphone", 20, 50000)
-    add_product("Tablet", 15, 30000)
+
+# Example Usage #
+'''if __name__ == "__main__":
+  add_product(2, "Smartphone", 20, 45000)
     
-    print("All Products:")
-    print(fetch_all_products())
+    update_quantity(1, 12)
     
-    print("Most Expensive Product:")
-    print(find_most_expensive_product())
+    print("All Products:", fetch_products())
+    print("Most Expensive Product:", most_expensive_product())'''
+
+# Close connection #
+conn.close()
